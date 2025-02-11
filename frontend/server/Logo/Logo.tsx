@@ -7,7 +7,7 @@ export interface LogoProps {
 export function Logo({ className }: LogoProps) {
   return (
     <Link
-      href={process.env.FRONTEND_URL as string}
+      href={"/" as string}
       className={cn(
         className && className,
         'inline-flex items-center',

@@ -1,3 +1,4 @@
+# Define fragments
 fragment MenuItemContent on MenuItem {
   id
   uri
@@ -20,7 +21,7 @@ fragment MenuContent on Menu {
   name
   locations
   slug
-  menuItems(first: 20, where: {parentId: 0}) {
+  menuItems(first: 20, where: { parentId: 0 }) {
     nodes {
       ...MenuItemRecursive
     }
@@ -47,7 +48,7 @@ fragment ProductContentSlice on Product {
   type
   image {
     id
-    sourceUrl(size:WOOCOMMERCE_THUMBNAIL)
+    sourceUrl(size: WOOCOMMERCE_THUMBNAIL)
     altText
   }
   ... on SimpleProduct {
@@ -69,7 +70,7 @@ fragment ProductVariationContentSlice on ProductVariation {
   slug
   image {
     id
-    sourceUrl(size:WOOCOMMERCE_THUMBNAIL)
+    sourceUrl(size: WOOCOMMERCE_THUMBNAIL)
     altText
   }
   price
@@ -85,7 +86,7 @@ fragment ProductContentSmall on Product {
   shortDescription(format: RAW)
   image {
     id
-    sourceUrl(size:WOOCOMMERCE_THUMBNAIL)
+    sourceUrl(size: WOOCOMMERCE_THUMBNAIL)
     altText
   }
   productCategories(first: 20) {
@@ -145,7 +146,7 @@ fragment ProductContentFull on Product {
   galleryImages {
     nodes {
       id
-      sourceUrl(size:WOOCOMMERCE_THUMBNAIL)
+      sourceUrl(size: WOOCOMMERCE_THUMBNAIL)
       altText
     }
   }
@@ -329,26 +330,31 @@ fragment CartContent on Cart {
 }
 
 fragment CustomerFields on Customer {
-    id
-    databaseId
-    firstName
-    lastName
-    displayName
-    email
-    sessionToken
-    metaData {
-      key
-      value
-    }
+  id
+  databaseId
+  firstName
+  lastName
+  displayName
+  email
+  sessionToken
+  metaData {
+    key
+    value
+  }
 }
 
+# Use fragments in queries and mutations
 query GetTopNav {
   menu(id: "primary", idType: LOCATION) {
     ...MenuContent
   }
 }
 
-query GetProducts($first: Int, $after: String, $where: RootQueryToProductConnectionWhereArgs) {
+query GetProducts(
+  $first: Int,
+  $after: String,
+  $where: RootQueryToProductUnionConnectionWhereArgs
+) {
   products(first: $first, after: $after, where: $where) {
     pageInfo {
       endCursor
@@ -362,6 +368,26 @@ query GetProducts($first: Int, $after: String, $where: RootQueryToProductConnect
     }
     nodes {
       ...ProductContentSmall
+    }
+  }
+}
+
+# mutation Login($username: String!, $password: String!) {
+#   login(input: { username: $username, password: $password }) {
+#     authToken
+#     refreshToken
+#     customer {
+#       ...CustomerFields
+#     }
+#   }
+# }
+
+mutation UpdateCustomer($input: UpdateCustomerInput!) {
+  updateCustomer(input: $input) {
+    # authToken
+    # refreshToken
+    customer {
+      ...CustomerFields
     }
   }
 }
@@ -470,7 +496,7 @@ mutation AddToCart(
 }
 
 mutation UpdateCartItemQuantities($items: [CartItemQuantityInput]) {
-  updateItemQuantities(input: {items: $items}) {
+  updateItemQuantities(input: { items: $items }) {
     cart {
       ...CartContent
     }
@@ -481,7 +507,7 @@ mutation UpdateCartItemQuantities($items: [CartItemQuantityInput]) {
 }
 
 mutation RemoveItemsFromCart($keys: [ID], $all: Boolean) {
-  removeItemsFromCart(input: {keys: $keys, all: $all}) {
+  removeItemsFromCart(input: { keys: $keys, all: $all }) {
     cart {
       ...CartContent
     }
@@ -491,21 +517,22 @@ mutation RemoveItemsFromCart($keys: [ID], $all: Boolean) {
   }
 }
 
-mutation Login($username: String!, $password: String!) {
-  login(input: { username: $username, password: $password }) {
-    authToken
-    refreshToken
-    customer {
-      ...CustomerFields
-    }
-  }
-}
+# mutation Login($username: String!, $password: String!) {
+#   login( { username: $username, password: $password }) {
+#     refreshTokensessionToken
+#     sessionToken
+#     customer {
+#       ...CustomerFields
+#     }
+#   }
+# }
 
-mutation RefreshAuthToken($refreshToken: String!) {
-  refreshJwtAuthToken(input: { jwtRefreshToken: $refreshToken }) {
-    authToken
-  }
-}
+
+# mutation RefreshAuthToken($refreshToken: String!) {
+#   refreshJwtAuthToken(input: { jwtRefreshToken: $refreshToken }) {
+#     authToken
+#   }
+# }
 
 mutation UpdateSession($input: UpdateSessionInput!) {
   updateSession(input: $input) {

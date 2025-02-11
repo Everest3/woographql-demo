@@ -2,7 +2,6 @@ import { GraphQLClient } from 'graphql-request';
 import deepmerge from 'deepmerge';
 
 import {
-  RootQueryToProductConnectionWhereArgs,
   Product,
   ProductCategory,
   PaColor,
@@ -10,11 +9,13 @@ import {
   RootQueryToProductCategoryConnectionWhereArgs,
   RootQueryToPaColorConnectionWhereArgs,
   ProductIdTypeEnum,
+  RootQueryToProductUnionConnectionWhereArgs,
 } from './generated';
 
 let client: GraphQLClient;
 export function getClient() {
   const endpoint = process.env.GRAPHQL_ENDPOINT
+  console.log({endpoint})
   if (!endpoint) {
     throw new Error('GRAPHQL_ENDPOINT is not defined')
   }
@@ -42,7 +43,7 @@ const initialConnectionResults = {
 export async function fetchProducts(
   pageSize: number, 
   pageLimit = 0,
-  where?: RootQueryToProductConnectionWhereArgs) {
+  where?: RootQueryToProductUnionConnectionWhereArgs) {
   try {
     const client = getClientWithSdk();
     let data = { products: initialConnectionResults }

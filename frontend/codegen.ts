@@ -3,7 +3,7 @@ import dotenv from 'dotenv-flow';
 
 dotenv.config({ silent: true }); 
 const config: CodegenConfig = {
-  schema: process.env.GRAPHQL_ENDPOINT,
+  schema: "https://staging.shop.shpresa.al/graphql",
   documents: ['graphql/**/*.graphql'],
   verbose: true,
   overwrite: true,

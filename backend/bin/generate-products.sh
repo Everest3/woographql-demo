@@ -1,4 +1,3 @@
-#!/bin/bash
 
 wp plugin activate wc-smooth-generator
-wp wc generate products $1 
+wp wc generate products 100
